@@ -23,24 +23,10 @@ import com.io7m.wastebasket.api.WBPassKey;
 import com.io7m.wastebasket.api.WBUserDatabaseType;
 import com.io7m.wastebasket.api.WBUserName;
 import com.io7m.wastebasket.vanilla.WBUserDatabase;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.SecureRandom;
-import java.util.Properties;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static java.nio.file.StandardOpenOption.CREATE_NEW;
-import static java.nio.file.StandardOpenOption.WRITE;
+import java.nio.file.Path;
 
 @Parameters(commandDescription = "Add a user to the user database")
 public final class CommandUserAdd extends CommandRoot
@@ -86,8 +72,9 @@ public final class CommandUserAdd extends CommandRoot
     final WBPassKey pass =
       WBPassKey.of(this.passKey);
 
-    try (final WBUserDatabaseType users =
-           WBUserDatabase.create(x -> { }, this.userDatabase)) {
+    try (WBUserDatabaseType users =
+           WBUserDatabase.create(x -> {
+           }, this.userDatabase)) {
       users.userAdd(user, pass);
     }
 

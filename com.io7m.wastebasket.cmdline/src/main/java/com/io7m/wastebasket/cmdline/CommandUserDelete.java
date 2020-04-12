@@ -22,9 +22,10 @@ import com.beust.jcommander.Parameters;
 import com.io7m.wastebasket.api.WBUserDatabaseType;
 import com.io7m.wastebasket.api.WBUserName;
 import com.io7m.wastebasket.vanilla.WBUserDatabase;
-import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.Path;
 
 @Parameters(commandDescription = "Remove a user from the user database")
 public final class CommandUserDelete extends CommandRoot
@@ -60,8 +61,9 @@ public final class CommandUserDelete extends CommandRoot
     super.call();
 
     final WBUserName user = WBUserName.of(this.userName);
-    try (final WBUserDatabaseType users =
-           WBUserDatabase.create(x -> { }, this.userDatabase)) {
+    try (WBUserDatabaseType users =
+           WBUserDatabase.create(x -> {
+           }, this.userDatabase)) {
       users.userDelete(user);
     }
     return null;

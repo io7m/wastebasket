@@ -18,6 +18,7 @@ package com.io7m.wastebasket.cmdline;
 
 import ch.qos.logback.classic.Level;
 import com.io7m.junreachable.UnreachableCodeException;
+
 import java.util.Objects;
 
 /**

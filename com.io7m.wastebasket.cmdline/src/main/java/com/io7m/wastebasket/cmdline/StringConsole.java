@@ -22,7 +22,7 @@ import com.beust.jcommander.internal.Console;
 
 public final class StringConsole implements Console
 {
-  private StringBuilder builder;
+  private final StringBuilder builder;
 
   public StringConsole()
   {

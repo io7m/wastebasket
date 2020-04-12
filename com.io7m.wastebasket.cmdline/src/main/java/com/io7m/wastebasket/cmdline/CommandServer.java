@@ -27,14 +27,15 @@ import com.io7m.wastebasket.vanilla.WBBlobStore;
 import com.io7m.wastebasket.vanilla.WBFilesWatcher;
 import com.io7m.wastebasket.vanilla.WBServerMain;
 import com.io7m.wastebasket.vanilla.WBUserDatabase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Parameters(commandDescription = "Start the server")
 public final class CommandServer extends CommandRoot
@@ -148,10 +149,10 @@ public final class CommandServer extends CommandRoot
         return thread;
       });
 
-    try (final var auditLogger = WBAuditLog.create(this.auditLog)) {
+    try (var auditLogger = WBAuditLog.create(this.auditLog)) {
       final WBBlobStoreType blobStore = WBBlobStore.create(this.dataDirectory);
 
-      try (final WBUserDatabaseType users =
+      try (WBUserDatabaseType users =
              WBUserDatabase.create(userExecutor, this.userDatabase)) {
         final WBServerMain server =
           WBServerMain.create(
@@ -172,7 +173,7 @@ public final class CommandServer extends CommandRoot
           }
         };
 
-        try (final WBFilesWatcher ignored =
+        try (WBFilesWatcher ignored =
                WBFilesWatcher.create(
                  watcherExecutor,
                  List.of(

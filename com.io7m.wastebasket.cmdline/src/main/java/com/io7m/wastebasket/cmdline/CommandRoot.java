@@ -26,7 +26,7 @@ class CommandRoot implements CommandType
     names = "--verbose",
     converter = WBLogLevelConverter.class,
     description = "Set the minimum logging verbosity level")
-  private WBLogLevel verbose = WBLogLevel.LOG_INFO;
+  private final WBLogLevel verbose = WBLogLevel.LOG_INFO;
 
   CommandRoot()
   {

@@ -17,6 +17,7 @@
 package com.io7m.wastebasket.cmdline;
 
 import com.beust.jcommander.IStringConverter;
+
 import java.util.Objects;
 
 /**
