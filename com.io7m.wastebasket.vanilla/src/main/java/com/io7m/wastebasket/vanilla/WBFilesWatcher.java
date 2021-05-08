@@ -17,6 +17,9 @@
 
 package com.io7m.wastebasket.vanilla;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,8 +30,10 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+/**
+ * A file watcher.
+ */
 
 public final class WBFilesWatcher implements Closeable
 {
@@ -55,6 +60,16 @@ public final class WBFilesWatcher implements Closeable
     this.done = new AtomicBoolean(false);
     this.executor.execute(this::run);
   }
+
+  /**
+   * Create a file watcher.
+   *
+   * @param executor The executor upon which to execute operations
+   * @param files    The watched files
+   * @param onChange The method executed on file changes
+   *
+   * @return A file watcher
+   */
 
   public static WBFilesWatcher create(
     final Executor executor,

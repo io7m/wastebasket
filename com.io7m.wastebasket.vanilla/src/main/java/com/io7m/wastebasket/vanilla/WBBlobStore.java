@@ -18,8 +18,9 @@
 
 package com.io7m.wastebasket.vanilla;
 
-import com.io7m.wastebasket.api.WBBlobStoreType;
 import com.io7m.wastebasket.api.WBBlobID;
+import com.io7m.wastebasket.api.WBBlobStoreType;
+
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,6 +33,10 @@ import java.util.Objects;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.WRITE;
 
+/**
+ * A blob store.
+ */
+
 public final class WBBlobStore implements WBBlobStoreType
 {
   private final Path directory;
@@ -43,22 +48,18 @@ public final class WBBlobStore implements WBBlobStoreType
       Objects.requireNonNull(inDirectory, "directory");
   }
 
+  /**
+   * Create a blob store.
+   *
+   * @param directory The directory
+   *
+   * @return A blob store
+   */
+
   public static WBBlobStoreType create(
     final Path directory)
   {
     return new WBBlobStore(directory);
-  }
-
-  @Override
-  public DigestOutputStream open(final WBBlobID id)
-    throws IOException, NoSuchAlgorithmException
-  {
-    Objects.requireNonNull(id, "id");
-
-    Files.createDirectories(this.directory);
-    final Path outputPath = this.directory.resolve(id.value());
-    final MessageDigest digest = MessageDigest.getInstance("SHA-256");
-    return outputStream(outputPath, digest);
   }
 
   private static DigestOutputStream outputStream(
@@ -71,5 +72,17 @@ public final class WBBlobStore implements WBBlobStoreType
         Files.newOutputStream(outputPath, CREATE_NEW, WRITE),
         8192),
       digest);
+  }
+
+  @Override
+  public DigestOutputStream open(final WBBlobID id)
+    throws IOException, NoSuchAlgorithmException
+  {
+    Objects.requireNonNull(id, "id");
+
+    Files.createDirectories(this.directory);
+    final Path outputPath = this.directory.resolve(id.value());
+    final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+    return outputStream(outputPath, digest);
   }
 }

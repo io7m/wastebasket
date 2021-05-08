@@ -19,6 +19,11 @@ package com.io7m.wastebasket.vanilla;
 
 import com.io7m.wastebasket.api.WBServerConfiguration;
 import de.dentrassi.crypto.pem.PemKeyStoreProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,10 +33,10 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.Security;
 import java.util.Objects;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+/**
+ * Functions over SSL contexts.
+ */
 
 public final class WBSSLContexts
 {
@@ -43,11 +48,36 @@ public final class WBSSLContexts
 
   }
 
+  /**
+   * @return An SSL context factory
+   */
+
   public static WBSSLContexts create()
   {
     Security.addProvider(new PemKeyStoreProvider());
     return new WBSSLContexts();
   }
+
+  private static void writeNewlines(
+    final OutputStream concatenation)
+    throws IOException
+  {
+    concatenation.write('\r');
+    concatenation.write('\n');
+    concatenation.write('\r');
+    concatenation.write('\n');
+  }
+
+  /**
+   * Create an SSL context.
+   *
+   * @param configuration The server configuration
+   *
+   * @return A new SSL context
+   *
+   * @throws GeneralSecurityException On errors
+   * @throws IOException              On errors
+   */
 
   public SSLContext createContext(
     final WBServerConfiguration configuration)
@@ -99,15 +129,5 @@ public final class WBSSLContexts
     final var context = SSLContext.getInstance(protocol);
     context.init(keyManagers.getKeyManagers(), null, null);
     return context;
-  }
-
-  private static void writeNewlines(
-    final OutputStream concatenation)
-    throws IOException
-  {
-    concatenation.write('\r');
-    concatenation.write('\n');
-    concatenation.write('\r');
-    concatenation.write('\n');
   }
 }

@@ -18,6 +18,7 @@
 package com.io7m.wastebasket.vanilla;
 
 import com.io7m.wastebasket.api.WBAuditLogType;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,6 +43,16 @@ public final class WBAuditLog implements WBAuditLogType
   {
     this.writer = Objects.requireNonNull(inWriter, "writer");
   }
+
+  /**
+   * Create an audit log.
+   *
+   * @param file The log file
+   *
+   * @return An audit log
+   *
+   * @throws IOException On I/O errors
+   */
 
   public static WBAuditLogType create(
     final Path file)

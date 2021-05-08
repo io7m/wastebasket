@@ -27,6 +27,10 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 
+/**
+ * The "user-delete" command.
+ */
+
 @Parameters(commandDescription = "Remove a user from the user database")
 public final class CommandUserDelete extends CommandRoot
 {

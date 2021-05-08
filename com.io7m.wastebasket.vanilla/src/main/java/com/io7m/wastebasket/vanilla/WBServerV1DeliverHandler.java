@@ -18,12 +18,22 @@
 package com.io7m.wastebasket.vanilla;
 
 import com.io7m.wastebasket.api.WBAuditLogType;
-import com.io7m.wastebasket.api.WBBlobStoreType;
 import com.io7m.wastebasket.api.WBBlobID;
+import com.io7m.wastebasket.api.WBBlobStoreType;
 import com.io7m.wastebasket.api.WBPassKey;
 import com.io7m.wastebasket.api.WBServerConfiguration;
 import com.io7m.wastebasket.api.WBUserDatabaseType;
 import com.io7m.wastebasket.api.WBUserName;
+import org.apache.commons.io.input.BoundedInputStream;
+import org.bouncycastle.util.encoders.Hex;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.FileAlreadyExistsException;
@@ -33,15 +43,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Objects;
 import java.util.regex.Pattern;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.io.input.BoundedInputStream;
-import org.bouncycastle.util.encoders.Hex;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.servlet.http.HttpServletResponse.SC_CONFLICT;
@@ -49,6 +50,10 @@ import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static javax.servlet.http.HttpServletResponse.SC_METHOD_NOT_ALLOWED;
 import static javax.servlet.http.HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+
+/**
+ * A V1 deliver handler.
+ */
 
 public final class WBServerV1DeliverHandler extends AbstractHandler
 {
@@ -149,12 +154,13 @@ public final class WBServerV1DeliverHandler extends AbstractHandler
     );
 
     if (LOG.isInfoEnabled()) {
-      LOG.info("write {} {}:{} {} {}",
-               userName,
-               baseRequest.getRemoteAddr(),
-               Integer.valueOf(baseRequest.getRemotePort()),
-               id.value(),
-               Long.toUnsignedString(sizeProvided));
+      LOG.info(
+        "write {} {}:{} {} {}",
+        userName,
+        baseRequest.getRemoteAddr(),
+        Integer.valueOf(baseRequest.getRemotePort()),
+        id.value(),
+        Long.toUnsignedString(sizeProvided));
     }
 
     try (DigestOutputStream outputStream = this.database.open(id)) {

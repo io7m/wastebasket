@@ -21,9 +21,6 @@ import com.io7m.wastebasket.api.WBAuditLogType;
 import com.io7m.wastebasket.api.WBBlobStoreType;
 import com.io7m.wastebasket.api.WBServerConfiguration;
 import com.io7m.wastebasket.api.WBUserDatabaseType;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.Objects;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
@@ -39,6 +36,14 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.Objects;
+
+/**
+ * The main server.
+ */
+
 public final class WBServerMain
 {
   private static final Logger LOG =
@@ -46,7 +51,7 @@ public final class WBServerMain
 
   private final Server server;
   private final HttpConfiguration httpsConfig;
-  private WBServerConfiguration configuration;
+  private final WBServerConfiguration configuration;
 
   private WBServerMain(
     final WBServerConfiguration inConfiguration,
@@ -60,6 +65,20 @@ public final class WBServerMain
     this.httpsConfig =
       Objects.requireNonNull(inHttpsConfig, "httpsConfig");
   }
+
+  /**
+   * Create a server.
+   *
+   * @param configuration The server configuration
+   * @param blobStore     The blob store
+   * @param users         The user database
+   * @param auditLog      The audit log
+   *
+   * @return A server instance
+   *
+   * @throws GeneralSecurityException On errors
+   * @throws IOException              On I/O errors
+   */
 
   public static WBServerMain create(
     final WBServerConfiguration configuration,
@@ -93,7 +112,7 @@ public final class WBServerMain
       new WBServerV1DeliverHandler(configuration, blobStore, users, auditLog));
 
     final var contexts = new ContextHandlerCollection();
-    contexts.setHandlers(new Handler[] {
+    contexts.setHandlers(new Handler[]{
       contextRoot,
       contextV1Deliver,
     });
@@ -124,7 +143,10 @@ public final class WBServerMain
       new HttpConnectionFactory(httpsConfig);
 
     final ServerConnector sslConnector =
-      new ServerConnector(inServer, sslConnectionFactory, httpConnectionFactory);
+      new ServerConnector(
+        inServer,
+        sslConnectionFactory,
+        httpConnectionFactory);
 
     final var bindAddress = inConfiguration.bindAddress();
     final var bindPort = inConfiguration.bindPort();
@@ -141,10 +163,16 @@ public final class WBServerMain
       }
     }
 
-    inServer.setConnectors(new Connector[] {
+    inServer.setConnectors(new Connector[]{
       sslConnector,
     });
   }
+
+  /**
+   * Start the server.
+   *
+   * @throws Exception On errors
+   */
 
   public void start()
     throws Exception
@@ -156,12 +184,25 @@ public final class WBServerMain
     this.server.start();
   }
 
+  /**
+   * Reload the server.
+   *
+   * @throws GeneralSecurityException On errors
+   * @throws IOException              On errors
+   */
+
   public void reload()
     throws GeneralSecurityException, IOException
   {
     LOG.info("reloading TLS configuration");
     createConnectors(this.configuration, this.server, this.httpsConfig);
   }
+
+  /**
+   * Stop the server.
+   *
+   * @throws InterruptedException If the operation is interrupted
+   */
 
   public void join()
     throws InterruptedException

@@ -18,17 +18,25 @@
 
 package com.io7m.wastebasket.vanilla;
 
-import java.io.IOException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
+
+/**
+ * A server root handler.
+ */
 
 public final class WBServerRootHandler extends AbstractHandler
 {
+  private static final String VERSION_TEXT =
+    String.format("Wastebasket %s\r\n", version());
+
   WBServerRootHandler()
   {
 
@@ -45,9 +53,6 @@ public final class WBServerRootHandler extends AbstractHandler
     }
     return "0.0.0";
   }
-
-  private static final String VERSION_TEXT =
-    String.format("Wastebasket %s\r\n", version());
 
   @Override
   public void handle(

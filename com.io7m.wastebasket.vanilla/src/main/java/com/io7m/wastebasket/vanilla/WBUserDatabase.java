@@ -20,6 +20,12 @@ package com.io7m.wastebasket.vanilla;
 import com.io7m.wastebasket.api.WBPassKey;
 import com.io7m.wastebasket.api.WBUserDatabaseType;
 import com.io7m.wastebasket.api.WBUserName;
+import org.bouncycastle.util.encoders.Hex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,16 +39,15 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import org.bouncycastle.util.encoders.Hex;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.WRITE;
+
+/**
+ * The user database.
+ */
 
 public final class WBUserDatabase implements WBUserDatabaseType
 {
@@ -67,6 +72,33 @@ public final class WBUserDatabase implements WBUserDatabaseType
     this.watchExecutor.execute(this::run);
   }
 
+  /**
+   * Create the user database.
+   *
+   * @param watchExecutor A file watcher executor
+   * @param file          The database file
+   *
+   * @return A database
+   */
+
+  public static WBUserDatabaseType create(
+    final Executor watchExecutor,
+    final Path file)
+  {
+    return new WBUserDatabase(watchExecutor, file);
+  }
+
+  private static boolean slowEquals(
+    final byte[] a,
+    final byte[] b)
+  {
+    int diff = a.length ^ b.length;
+    for (int index = 0; index < a.length && index < b.length; ++index) {
+      diff |= (int) a[index] ^ (int) b[index];
+    }
+    return diff == 0;
+  }
+
   private void run()
   {
     while (!this.done.get()) {
@@ -89,13 +121,6 @@ public final class WBUserDatabase implements WBUserDatabaseType
         Thread.currentThread().interrupt();
       }
     }
-  }
-
-  public static WBUserDatabaseType create(
-    final Executor watchExecutor,
-    final Path file)
-  {
-    return new WBUserDatabase(watchExecutor, file);
   }
 
   @Override
@@ -233,16 +258,5 @@ public final class WBUserDatabase implements WBUserDatabaseType
 
     loadedProps.remove(user.value());
     this.replaceDatabase(loadedProps);
-  }
-
-  private static boolean slowEquals(
-    final byte[] a,
-    final byte[] b)
-  {
-    int diff = a.length ^ b.length;
-    for (int index = 0; index < a.length && index < b.length; ++index) {
-      diff |= (int) a[index] ^ (int) b[index];
-    }
-    return diff == 0;
   }
 }

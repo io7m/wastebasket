@@ -28,6 +28,10 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 
+/**
+ * The "user-add" command.
+ */
+
 @Parameters(commandDescription = "Add a user to the user database")
 public final class CommandUserAdd extends CommandRoot
 {

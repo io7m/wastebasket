@@ -37,6 +37,10 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * The "server" command.
+ */
+
 @Parameters(commandDescription = "Start the server")
 public final class CommandServer extends CommandRoot
 {

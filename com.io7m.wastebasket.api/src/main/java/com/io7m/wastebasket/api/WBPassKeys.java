@@ -20,6 +20,10 @@ package com.io7m.wastebasket.api;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+/**
+ * Functions over passkeys.
+ */
+
 public final class WBPassKeys
 {
   /**

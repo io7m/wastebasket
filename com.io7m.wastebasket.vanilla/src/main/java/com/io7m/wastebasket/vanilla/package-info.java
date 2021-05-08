@@ -19,6 +19,9 @@
  * Authenticated, write-only HTTP store (Vanilla implementation)
  */
 
-@org.osgi.annotation.bundle.Export
-@org.osgi.annotation.versioning.Version("1.0.0")
+@Export
+@Version("1.0.0")
 package com.io7m.wastebasket.vanilla;
+
+import org.osgi.annotation.bundle.Export;
+import org.osgi.annotation.versioning.Version;

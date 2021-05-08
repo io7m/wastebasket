@@ -20,14 +20,26 @@ package com.io7m.wastebasket.cmdline;
 
 import com.beust.jcommander.internal.Console;
 
+/**
+ * A StringBuilder-based console.
+ */
+
 public final class StringConsole implements Console
 {
   private final StringBuilder builder;
+
+  /**
+   * A StringBuilder-based console.
+   */
 
   public StringConsole()
   {
     this.builder = new StringBuilder(128);
   }
+
+  /**
+   * @return The string builder
+   */
 
   public StringBuilder builder()
   {
