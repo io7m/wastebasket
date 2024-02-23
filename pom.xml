@@ -30,6 +30,7 @@
 
   <properties>
     <io7m.api.previousVersion>0.0.1</io7m.api.previousVersion>
+    <io7m.java.targetJavaVersion>21</io7m.java.targetJavaVersion>
     <com.io7m.wastebasket.org.immutables.version>2.10.0</com.io7m.wastebasket.org.immutables.version>
     <jetty.version>12.0.5</jetty.version>
     <junit.version>5.10.1</junit.version>
